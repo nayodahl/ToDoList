@@ -32,9 +32,9 @@ class TaskController extends AbstractController
             // is user is authenticated, then user is added to task, else user will be null
             $task->setUser($this->getUser());
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($task);
-            $em->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($task);
+            $entityManager->flush();
 
             $this->addFlash('success', 'La tâche a été bien été ajoutée.');
 
@@ -85,9 +85,9 @@ class TaskController extends AbstractController
      */
     public function deleteTaskAction(Task $task)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($task);
+        $entityManager->flush();
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 
