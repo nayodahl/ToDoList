@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Form\TaskType;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class TaskController extends AbstractController
 {
@@ -29,8 +29,10 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            // is user is authenticated, then user is added to task, else user will be null
+            $task->setUser($this->getUser());
 
+            $em = $this->getDoctrine()->getManager();
             $em->persist($task);
             $em->flush();
 
