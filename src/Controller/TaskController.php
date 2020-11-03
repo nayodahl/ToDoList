@@ -11,11 +11,19 @@ use Symfony\Component\Routing\Annotation\Route;
 class TaskController extends AbstractController
 {
     /**
-     * @Route("/tasks", name="task_list")
+     * @Route("/tasks", name="task_list_not_done")
      */
-    public function listAction()
+    public function listNotDoneAction()
     {
-        return $this->render('task/list.html.twig', ['tasks' => $this->getDoctrine()->getRepository('App:Task')->findAll()]);
+        return $this->render('task/list.html.twig', ['tasks' => $this->getDoctrine()->getRepository('App:Task')->findBy(['isDone' => 0])]);
+    }
+
+    /**
+     * @Route("/tasks/done", name="task_list_done")
+     */
+    public function listDoneAction()
+    {
+        return $this->render('task/list.html.twig', ['tasks' => $this->getDoctrine()->getRepository('App:Task')->findBy(['isDone' => 1])]);
     }
 
     /**
@@ -38,7 +46,7 @@ class TaskController extends AbstractController
 
             $this->addFlash('success', 'La tâche a été bien été ajoutée.');
 
-            return $this->redirectToRoute('task_list');
+            return $this->redirectToRoute('task_list_not_done');
         }
 
         return $this->render('task/create.html.twig', ['form' => $form->createView()]);
@@ -58,7 +66,7 @@ class TaskController extends AbstractController
         if (($this->getUser() !== $task->getUser()) && (null !== $task->getUser())) {
             $this->addFlash('error', sprintf('Vous n\'êtes pas l\'auteur(e) de la tâche %s.', $task->getTitle()));
 
-            return $this->redirectToRoute('task_list');
+            return $this->redirectToRoute('task_list_not_done');
         }
 
         $form = $this->createForm(TaskType::class, $task);
@@ -69,7 +77,7 @@ class TaskController extends AbstractController
 
             $this->addFlash('success', 'La tâche a bien été modifiée.');
 
-            return $this->redirectToRoute('task_list');
+            return $this->redirectToRoute('task_list_not_done');
         }
 
         return $this->render('task/edit.html.twig', [
@@ -86,9 +94,9 @@ class TaskController extends AbstractController
         $task->toggle(!$task->isDone());
         $this->getDoctrine()->getManager()->flush();
 
-        $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+        $this->addFlash('success', sprintf('Le statut de la tâche %s a bien été modifié.', $task->getTitle()));
 
-        return $this->redirectToRoute('task_list');
+        return $this->redirectToRoute('task_list_not_done');
     }
 
     /**
@@ -105,7 +113,7 @@ class TaskController extends AbstractController
         if (($this->getUser() !== $task->getUser()) && (null !== $task->getUser())) {
             $this->addFlash('error', sprintf('Vous n\'êtes pas l\'auteur(e) de la tâche %s.', $task->getTitle()));
 
-            return $this->redirectToRoute('task_list');
+            return $this->redirectToRoute('task_list_not_done');
         }
 
         $entityManager = $this->getDoctrine()->getManager();
@@ -114,6 +122,6 @@ class TaskController extends AbstractController
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 
-        return $this->redirectToRoute('task_list');
+        return $this->redirectToRoute('task_list_not_done');
     }
 }
