@@ -39,5 +39,11 @@
                 Il n'y a pas encore de tâche enregistrée. <a href="{{ path('task_create') }}" class="btn btn-warning pull-right">Créer une tâche</a>
             </div>
         {% endfor %}
+
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            {{ knp_pagination_render(tasks) }}
+        </div>
     </div>
 {% endblock %}

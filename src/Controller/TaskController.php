@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Form\TaskType;
+use App\Repository\TaskRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,17 +15,25 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks", name="task_list_not_done")
      */
-    public function listNotDoneAction()
+    public function listNotDoneAction(TaskRepository $taskRepo, PaginatorInterface $paginator, Request $request)
     {
-        return $this->render('task/list.html.twig', ['tasks' => $this->getDoctrine()->getRepository('App:Task')->findBy(['isDone' => 0])]);
+        $tasks = $taskRepo->findBy(['isDone' => 0]);
+        $paginated = $paginator->paginate($tasks, $request->query->getInt('page', 1));
+        $paginated->setTemplate('pagination/twitter_bootstrap_v4_pagination.html.twig');
+
+        return $this->render('task/list.html.twig', ['tasks' => $paginated]);
     }
 
     /**
      * @Route("/tasks/done", name="task_list_done")
      */
-    public function listDoneAction()
+    public function listDoneAction(TaskRepository $taskRepo, PaginatorInterface $paginator, Request $request)
     {
-        return $this->render('task/list.html.twig', ['tasks' => $this->getDoctrine()->getRepository('App:Task')->findBy(['isDone' => 1])]);
+        $tasks = $taskRepo->findBy(['isDone' => 1]);
+        $paginated = $paginator->paginate($tasks, $request->query->getInt('page', 1));
+        $paginated->setTemplate('pagination/twitter_bootstrap_v4_pagination.html.twig');
+
+        return $this->render('task/list.html.twig', ['tasks' => $paginated]);
     }
 
     /**
