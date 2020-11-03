@@ -49,8 +49,13 @@ class TaskController extends AbstractController
      */
     public function editAction(Task $task, Request $request)
     {
-        $form = $this->createForm(TaskType::class, $task);
+        if ($this->getUser() !== $task->getUser()) {
+            $this->addFlash('error', sprintf('Vous n\'êtes pas l\'auteur(e) de la tâche %s.', $task->getTitle()));
 
+            return $this->redirectToRoute('task_list');
+        }
+
+        $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -85,6 +90,12 @@ class TaskController extends AbstractController
      */
     public function deleteTaskAction(Task $task)
     {
+        if ($this->getUser() !== $task->getUser()) {
+            $this->addFlash('error', sprintf('Vous n\'êtes pas l\'auteur(e) de la tâche %s.', $task->getTitle()));
+
+            return $this->redirectToRoute('task_list');
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($task);
         $entityManager->flush();
