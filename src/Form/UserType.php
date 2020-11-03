@@ -33,19 +33,24 @@ class UserType extends AbstractType
                   'Membre' => 'ROLE_USER',
                   'Admin' => 'ROLE_ADMIN',
                 ],
+                'label' => 'Profil',
             ])
         ;
 
-        // Data transformer
+        // Data transformer, to convert array to string and string to array
         $builder->get('roles')
         ->addModelTransformer(new CallbackTransformer(
-            function ($rolesArray) {
+            function ($rolesAsArray) {
                 // transform the array to a string
-                return count($rolesArray) ? $rolesArray[0] : null;
+                if (null === $rolesAsArray) {
+                    return implode(', ', []);
+                }
+
+                return implode(', ', $rolesAsArray);
             },
-            function ($rolesString) {
+            function ($rolesAsString) {
                 // transform the string back to an array
-                return [$rolesString];
+                return explode(', ', $rolesAsString);
             }
         ));
     }
