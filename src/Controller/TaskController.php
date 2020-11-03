@@ -49,7 +49,13 @@ class TaskController extends AbstractController
      */
     public function editAction(Task $task, Request $request)
     {
-        if ($this->getUser() !== $task->getUser()) {
+        // if author of task is anonymous, then check if user has admin rights
+        if (null === $task->getUser()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        }
+
+        // check if user is the author of the task, and author of the task is not anonymous
+        if (($this->getUser() !== $task->getUser()) && (null !== $task->getUser())) {
             $this->addFlash('error', sprintf('Vous n\'êtes pas l\'auteur(e) de la tâche %s.', $task->getTitle()));
 
             return $this->redirectToRoute('task_list');
@@ -90,7 +96,13 @@ class TaskController extends AbstractController
      */
     public function deleteTaskAction(Task $task)
     {
-        if ($this->getUser() !== $task->getUser()) {
+        // if author of task is anonymous, then check if user has admin rights
+        if (null === $task->getUser()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        }
+
+        // check if user is the author of the task, and author of the task is not anonymous
+        if (($this->getUser() !== $task->getUser()) && (null !== $task->getUser())) {
             $this->addFlash('error', sprintf('Vous n\'êtes pas l\'auteur(e) de la tâche %s.', $task->getTitle()));
 
             return $this->redirectToRoute('task_list');
