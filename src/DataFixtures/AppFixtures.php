@@ -31,8 +31,8 @@ class AppFixtures extends Fixture
         // create 20 tasks for this user
         for ($i = 1; $i <= 20; ++$i) {
             $task = new Task();
-            $task->setTitle('titre de la tâche n° '.$i);
-            $task->setContent('contenu de la tâche n° '.$i);
+            $task->setTitle('titre de la tâche n° '.$i.' de '.$user->getUsername());
+            $task->setContent('contenu de la tâche n° '.$i.' de '.$user->getUsername());
             $task->setUser($user);
             $manager->persist($task);
         }
@@ -50,8 +50,8 @@ class AppFixtures extends Fixture
         // create 20 tasks for this user
         for ($i = 1; $i <= 20; ++$i) {
             $task = new Task();
-            $task->setTitle('titre de la tâche n° '.$i);
-            $task->setContent('contenu de la tâche n° '.$i);
+            $task->setTitle('titre de la tâche n° '.$i.' de '.$user->getUsername());
+            $task->setContent('contenu de la tâche n° '.$i.' de '.$user->getUsername());
             $task->setUser($user);
             $manager->persist($task);
         }

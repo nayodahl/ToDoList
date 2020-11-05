@@ -2,13 +2,12 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserControllerTest extends WebTestCase
 {
-    public function testListActionRequireAuthentication()
+    public function testUserListActionRequireAuthentication()
     {
         $client = static::createClient();
 
@@ -18,7 +17,7 @@ class UserControllerTest extends WebTestCase
         $this->assertStringContainsString('Redirecting to', $client->getResponse()->getContent());
     }
 
-    public function testListActionNonAdminIsDenied()
+    public function testUserListActionNonAdminIsDenied()
     {
         $client = static::createClient([], [
             'PHP_AUTH_USER' => 'utilisateur1',
@@ -30,7 +29,7 @@ class UserControllerTest extends WebTestCase
         $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
-    public function testListActionAdminIsAllowed()
+    public function testUserListActionAdminIsAllowed()
     {
         $client = static::createClient([], [
             'PHP_AUTH_USER' => 'utilisateur2',
@@ -42,7 +41,7 @@ class UserControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testCreateAction()
+    public function testUserCreateAction()
     {
         $client = static::createClient();
 
@@ -52,29 +51,35 @@ class UserControllerTest extends WebTestCase
         $this->assertStringContainsString('Créer un utilisateur', $client->getResponse()->getContent());
     }
 
-    public function testEditActionRequireAuthentication()
+    public function testUserEditActionRequireAuthentication()
     {
         $client = static::createClient();
 
-        $client->request('GET', '/users/22/edit');
+        // load an existing user, and try to edit its profile      
+        $userRepository = static::$container->get(UserRepository::class);
+        $userId = $userRepository->findOneBy(['username' => 'utilisateur1'])->getId();
+        $client->request('GET', '/users/' . $userId . '/edit');
 
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
         $this->assertStringContainsString('Redirecting to', $client->getResponse()->getContent());
     }
 
-    public function testEditActionNonAdminIsDenied()
+    public function testUserEditActionNonAdminIsDenied()
     {
         $client = static::createClient([], [
             'PHP_AUTH_USER' => 'utilisateur1',
             'PHP_AUTH_PW'   => '@dmIn123',
         ]);
 
-        $client->request('GET', '/users/22/edit');
+        // load an existing user, and try to edit its profile      
+        $userRepository = static::$container->get(UserRepository::class);
+        $userId = $userRepository->findOneBy(['username' => 'utilisateur1'])->getId();
+        $client->request('GET', '/users/' . $userId . '/edit');
 
         $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
-    public function testEditActionAdminIsAllowed()
+    public function testUserEditActionAdminIsAllowed()
     {
         // loggin as admin
         $client = static::createClient([], [
@@ -96,8 +101,7 @@ class UserControllerTest extends WebTestCase
         $client->followRedirect();
         $this->assertStringContainsString('utilisateur a bien été ajouté', $client->getResponse()->getContent());
 
-        // try now to access the edit form, editing this new user
-        
+        // try now to access the edit form, editing this new user        
         $userRepository = static::$container->get(UserRepository::class);
         $userId = $userRepository->findOneBy(['username' => 'jimmy'])->getId();
         $client->request('GET', '/users/' . $userId . '/edit');
