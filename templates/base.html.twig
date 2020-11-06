@@ -40,6 +40,7 @@
                 <a href="{{ path('user_create') }}" class="btn btn-primary">Créer un utilisateur</a>
 
                 {% if app.user %}
+                <a href="#" class="pull-right btn btn-primary disabled">{{ app.user.username }}</a>
                 <a href="{{ path('logout') }}" class="pull-right btn btn-danger">Se déconnecter</a>
                 {% endif %}
 
