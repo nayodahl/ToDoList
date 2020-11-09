@@ -17,9 +17,9 @@
                     <h4><a href="{{ path('task_edit', {'id' : task.id }) }}">{{ task.title }}</a></h4>
                     <p>{{ task.content }}</p>
                     {% if task.user %}
-                        <small class="pull-right">{{ task.user.username }}</small>
+                        <small class="pull-right">{{ task.user.username }}, le {{ task.createdAt|date("d/m/Y") }}</small>
                     {% else %}
-                        <small class="pull-right">anonymous</small>
+                        <small class="pull-right">anonyme, le {{ task.createdAt|date("d/m/Y") }}</small>
                     {% endif %}
                 </div>
                 <div>
