@@ -37,6 +37,18 @@ class TaskController extends AbstractController
     }
 
     /**
+     * @Route("/tasks/all", name="task_list_all")
+     */
+    public function listAllAction(TaskRepository $taskRepo, PaginatorInterface $paginator, Request $request)
+    {
+        $tasks = $taskRepo->findAll();
+        $paginated = $paginator->paginate($tasks, $request->query->getInt('page', 1));
+        $paginated->setTemplate('pagination/twitter_bootstrap_v4_pagination.html.twig');
+
+        return $this->render('task/list.html.twig', ['tasks' => $paginated]);
+    }
+
+    /**
      * @Route("/tasks/create", name="task_create")
      */
     public function createAction(Request $request)
