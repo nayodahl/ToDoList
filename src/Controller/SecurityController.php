@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use Anyx\LoginGateBundle\Service\BruteForceChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -12,8 +14,16 @@ class SecurityController extends AbstractController
     /**
      * @Route("/login", name="login")
      */
-    public function loginAction(Request $request, AuthenticationUtils $authenticationUtils)
+    public function loginAction(Request $request, AuthenticationUtils $authenticationUtils, BruteForceChecker $bruteForceChecker)
     {
+        
+        $request->request->set('_username', $authenticationUtils->getLastUsername());
+        
+        if (!$bruteForceChecker->canLogin($request)) {
+            return new Response('Too many login attempts');
+        }
+        
+
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
