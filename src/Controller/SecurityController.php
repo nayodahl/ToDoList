@@ -5,7 +5,6 @@ namespace App\Controller;
 use Anyx\LoginGateBundle\Service\BruteForceChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -16,16 +15,16 @@ class SecurityController extends AbstractController
      */
     public function loginAction(Request $request, AuthenticationUtils $authenticationUtils, BruteForceChecker $bruteForceChecker)
     {
-        
-        $request->request->set('_username', $authenticationUtils->getLastUsername());
-        
-        if (!$bruteForceChecker->canLogin($request)) {
-            return new Response('Too many login attempts');
-        }
-        
-
-        $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        $request->request->set('_username', $lastUsername);
+
+        if (!$bruteForceChecker->canLogin($request)) {
+            $this->addFlash('error', 'Trop de tentative de connexion, veuillez attendre 10 min et réessayer');
+
+            return $this->redirectToRoute('homepage');
+        }
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
