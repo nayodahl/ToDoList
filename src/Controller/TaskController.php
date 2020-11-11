@@ -81,7 +81,9 @@ class TaskController extends AbstractController
     {
         // if author of task is anonymous, then check if user has admin rights
         if (null === $task->getUser()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+            $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez modifier une tâche anonyme.'));
+
+            return $this->redirectToRoute('task_list_not_done');
         }
 
         // check if user is the author of the task, and author of the task is not anonymous
@@ -96,7 +98,6 @@ class TaskController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
             $this->addFlash('success', 'La tâche a bien été modifiée.');
 
             return $this->redirectToRoute('task_list_not_done');
@@ -115,7 +116,6 @@ class TaskController extends AbstractController
     {
         $task->toggle(!$task->isDone());
         $this->getDoctrine()->getManager()->flush();
-
         $this->addFlash('success', sprintf('Le statut de la tâche %s a bien été modifié.', $task->getTitle()));
 
         return $this->redirectToRoute('task_list_not_done');
@@ -128,7 +128,9 @@ class TaskController extends AbstractController
     {
         // if author of task is anonymous, then check if user has admin rights
         if (null === $task->getUser()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+            $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez supprimer une tâche anonyme.'));
+
+            return $this->redirectToRoute('task_list_not_done');
         }
 
         // check if user is the author of the task, and author of the task is not anonymous
@@ -141,7 +143,6 @@ class TaskController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($task);
         $entityManager->flush();
-
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 
         return $this->redirectToRoute('task_list_not_done');
