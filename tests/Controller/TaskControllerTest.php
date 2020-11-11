@@ -27,6 +27,16 @@ class TaskControllerTest extends WebTestCase
         $this->assertStringContainsString('Créer une tâche', $client->getResponse()->getContent());
     }
 
+    public function testTasksListAllAction()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/tasks/all');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Créer une tâche', $client->getResponse()->getContent());
+    }
+
     public function testTasksCreateAction()
     {
         $client = static::createClient();

@@ -107,6 +107,20 @@ class UserControllerTest extends WebTestCase
         $client->request('GET', '/users/' . $userId . '/edit');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('jimmy', $client->getResponse()->getContent());        
+        $this->assertStringContainsString('jimmy', $client->getResponse()->getContent());
+        
+        // submit the edit form with modified data, and control the output
+        $client->submitForm('Modifier', [
+            'user[username]' => 'jimmy2',
+            'user[password][first]' => '@dmIn123',
+            'user[password][second]' => '@dmIn123',
+            'user[email]' => 'jimmy2@test.com',
+            'user[roles]' => 'ROLE_ADMIN',
+        ]);
+
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('Superbe', $client->getResponse()->getContent());
+        $this->assertStringContainsString('jimmy2', $client->getResponse()->getContent());
     }
 }
