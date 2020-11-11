@@ -77,7 +77,9 @@ class TaskControllerTest extends WebTestCase
         $taskId = $taskRepository->findOneBy(['title' => 'Titre de tache de test anonyme'])->getId();
         $client->request('GET', '/tasks/' . $taskId . '/edit');
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $client->followRedirect();
+        $this->assertStringContainsString('administrateur', $client->getResponse()->getContent());
     }
 
     public function testTasksEditActionAllowIfAdminAndAuthorIsAnonymous()
@@ -193,7 +195,9 @@ class TaskControllerTest extends WebTestCase
         $taskId = $taskRepository->findOneBy(['title' => 'Titre testTasksDeleteActionDenyIfNotAdminAndAuthorIsAnonymous'])->getId();
         $client->request('GET', '/tasks/' . $taskId . '/delete');
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $client->followRedirect();
+        $this->assertStringContainsString('administrateur', $client->getResponse()->getContent());
     }
 
     public function testTasksDeleteActionAllowIfAdminAndAuthorIsAnonymous()
