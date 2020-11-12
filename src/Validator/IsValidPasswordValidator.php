@@ -13,7 +13,9 @@ class IsValidPasswordValidator extends ConstraintValidator
     {
         /* @var $constraint \App\Validator\IsValidPassword */
         if (!$constraint instanceof IsValidPassword) {
+            // @codeCoverageIgnoreStart
             throw new UnexpectedTypeException($constraint, IsValidPassword::class);
+            // @codeCoverageIgnoreEnd
         }
 
         // custom constraints should ignore null and empty values to allow
@@ -23,10 +25,12 @@ class IsValidPasswordValidator extends ConstraintValidator
         }
 
         if (!is_string($value)) {
+            // @codeCoverageIgnoreStart
             // throw this exception if your validator cannot handle the passed type so that it can be marked as invalid
             throw new UnexpectedValueException($value, 'string');
             // separate multiple types using pipes
             // throw new UnexpectedValueException($value, 'string|int');
+            // @codeCoverageIgnoreEnd
         }
 
         // Regex for password, exemple here https://ihateregex.io/expr/password

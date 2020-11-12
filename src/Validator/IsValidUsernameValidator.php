@@ -13,20 +13,26 @@ class IsValidUsernameValidator extends ConstraintValidator
     {
         /* @var $constraint \App\Validator\IsValidUsername */
         if (!$constraint instanceof IsValidUsername) {
+            // @codeCoverageIgnoreStart
             throw new UnexpectedTypeException($constraint, IsValidUsername::class);
+            // @codeCoverageIgnoreEnd
         }
 
         // custom constraints should ignore null and empty values to allow
         // other constraints (NotBlank, NotNull, etc.) take care of that
         if (null === $value || '' === $value) {
+            // @codeCoverageIgnoreStart
             return;
+            // @codeCoverageIgnoreEnd
         }
 
         if (!is_string($value)) {
+            // @codeCoverageIgnoreStart
             // throw this exception if your validator cannot handle the passed type so that it can be marked as invalid
             throw new UnexpectedValueException($value, 'string');
             // separate multiple types using pipes
             // throw new UnexpectedValueException($value, 'string|int');
+            // @codeCoverageIgnoreEnd
         }
 
         // Regex for username, exemple here https://ihateregex.io/expr/username
