@@ -22,7 +22,7 @@ class TaskType extends AbstractType
                     ]),
                     new Length([
                               'min' => 3,
-                              'minMessage' => "Le titre doit avoir minimum {{ limit }} caractères",
+                              'minMessage' => 'Le titre doit avoir minimum {{ limit }} caractères',
                     ]),
                 ],
             ])
@@ -34,7 +34,7 @@ class TaskType extends AbstractType
                     ]),
                     new Length([
                         'min' => 3,
-                        'minMessage' => "Le contenu doit avoir minimum {{ limit }} caractères",
+                        'minMessage' => 'Le contenu doit avoir minimum {{ limit }} caractères',
                     ]),
                 ],
             ])
