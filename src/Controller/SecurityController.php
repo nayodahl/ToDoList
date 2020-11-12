@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use Anyx\LoginGateBundle\Service\BruteForceChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -12,12 +14,18 @@ class SecurityController extends AbstractController
     /**
      * @Route("/login", name="login")
      */
-    public function loginAction(Request $request, AuthenticationUtils $authenticationUtils)
+    public function loginAction(Request $request, AuthenticationUtils $authenticationUtils, BruteForceChecker $bruteForceChecker): Response
     {
-        //$authenticationUtils = $this->get('security.authentication_utils');
-
-        $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        $request->request->set('_username', $lastUsername);
+
+        if (!$bruteForceChecker->canLogin($request)) {
+            $this->addFlash('error', 'Trop de tentative de connexion, veuillez attendre 10 min et réessayer');
+
+            return $this->redirectToRoute('homepage');
+        }
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
@@ -27,6 +35,7 @@ class SecurityController extends AbstractController
 
     /**
      * @Route("/login_check", name="login_check")
+     * @codeCoverageIgnore
      */
     public function loginCheck()
     {
@@ -35,6 +44,7 @@ class SecurityController extends AbstractController
 
     /**
      * @Route("/logout", name="logout")
+     * @codeCoverageIgnore
      */
     public function logoutCheck()
     {

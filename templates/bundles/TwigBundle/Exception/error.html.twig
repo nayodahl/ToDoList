@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'error' %}
+
+{% block body %}
+
+<section>
+    <div class="container login-section-inner">
+        <div class="row">
+            <div class="col-lg-6 col-md-4 mx-auto">   
+                <h1 class="text-danger section-heading" id="logintitle">Oups !!</h1>
+                <p class="lead">
+                    {{ status_text }}
+                </p>
+                <p class="lead">
+                    Code d'erreur : {{ status_code}}
+                </p>
+                <div>
+                    <a class="btn btn-primary" href="{{ path('homepage') }}">Retour à l'accueil</a>
+                </div>                                                        
+            </div>
+        </div>    
+    </div>
+</section>
+
+{% endblock %}

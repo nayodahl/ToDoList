@@ -1,4 +1,16 @@
 {
+    "anyx/login-gate-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "49f0e34d3f1059f8985e8e56e4b5e2b08e5fc79b"
+        },
+        "files": [
+            "config/packages/login_gate.yaml"
+        ]
+    },
     "composer/package-versions-deprecated": {
         "version": "1.11.99"
     },
@@ -150,6 +162,9 @@
     "ocramius/proxy-manager": {
         "version": "2.9.1"
     },
+    "php": {
+        "version": "7.4"
+    },
     "php-cs-fixer/diff": {
         "version": "v1.3.1"
     },
@@ -173,6 +188,9 @@
         "files": [
             "config/packages/sensio_framework_extra.yaml"
         ]
+    },
+    "staffim/rest-client": {
+        "version": "2.0.4"
     },
     "symfony/apache-pack": {
         "version": "1.0",
@@ -453,6 +471,9 @@
             "templates/base.html.twig"
         ]
     },
+    "symfony/twig-pack": {
+        "version": "v1.0.2"
+    },
     "symfony/validator": {
         "version": "4.3",
         "recipe": {
@@ -488,6 +509,9 @@
     },
     "symfony/yaml": {
         "version": "v4.4.16"
+    },
+    "twig/extra-bundle": {
+        "version": "v3.1.1"
     },
     "twig/twig": {
         "version": "v3.1.1"

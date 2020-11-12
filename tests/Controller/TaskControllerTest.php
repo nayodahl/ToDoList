@@ -27,6 +27,16 @@ class TaskControllerTest extends WebTestCase
         $this->assertStringContainsString('Créer une tâche', $client->getResponse()->getContent());
     }
 
+    public function testTasksListAllAction()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/tasks/all');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Créer une tâche', $client->getResponse()->getContent());
+    }
+
     public function testTasksCreateAction()
     {
         $client = static::createClient();
@@ -77,7 +87,9 @@ class TaskControllerTest extends WebTestCase
         $taskId = $taskRepository->findOneBy(['title' => 'Titre de tache de test anonyme'])->getId();
         $client->request('GET', '/tasks/' . $taskId . '/edit');
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $client->followRedirect();
+        $this->assertStringContainsString('administrateur', $client->getResponse()->getContent());
     }
 
     public function testTasksEditActionAllowIfAdminAndAuthorIsAnonymous()
@@ -193,7 +205,9 @@ class TaskControllerTest extends WebTestCase
         $taskId = $taskRepository->findOneBy(['title' => 'Titre testTasksDeleteActionDenyIfNotAdminAndAuthorIsAnonymous'])->getId();
         $client->request('GET', '/tasks/' . $taskId . '/delete');
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $client->followRedirect();
+        $this->assertStringContainsString('administrateur', $client->getResponse()->getContent());
     }
 
     public function testTasksDeleteActionAllowIfAdminAndAuthorIsAnonymous()

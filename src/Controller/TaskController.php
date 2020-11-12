@@ -8,14 +8,16 @@ use App\Repository\TaskRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class TaskController extends AbstractController
 {
     /**
      * @Route("/tasks", name="task_list_not_done")
      */
-    public function listNotDoneAction(TaskRepository $taskRepo, PaginatorInterface $paginator, Request $request)
+    public function listNotDoneAction(TaskRepository $taskRepo, PaginatorInterface $paginator, Request $request): Response
     {
         $tasks = $taskRepo->findBy(['isDone' => 0]);
         $paginated = $paginator->paginate($tasks, $request->query->getInt('page', 1));
@@ -27,7 +29,7 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/done", name="task_list_done")
      */
-    public function listDoneAction(TaskRepository $taskRepo, PaginatorInterface $paginator, Request $request)
+    public function listDoneAction(TaskRepository $taskRepo, PaginatorInterface $paginator, Request $request): Response
     {
         $tasks = $taskRepo->findBy(['isDone' => 1]);
         $paginated = $paginator->paginate($tasks, $request->query->getInt('page', 1));
@@ -37,9 +39,21 @@ class TaskController extends AbstractController
     }
 
     /**
+     * @Route("/tasks/all", name="task_list_all")
+     */
+    public function listAllAction(TaskRepository $taskRepo, PaginatorInterface $paginator, Request $request): Response
+    {
+        $tasks = $taskRepo->findAll();
+        $paginated = $paginator->paginate($tasks, $request->query->getInt('page', 1));
+        $paginated->setTemplate('pagination/twitter_bootstrap_v4_pagination.html.twig');
+
+        return $this->render('task/list.html.twig', ['tasks' => $paginated]);
+    }
+
+    /**
      * @Route("/tasks/create", name="task_create")
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): Response
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
@@ -65,11 +79,14 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/edit", name="task_edit")
      */
-    public function editAction(Task $task, Request $request)
+    public function editAction(Task $task, Request $request, Security $security): Response
     {
         // if author of task is anonymous, then check if user has admin rights
-        if (null === $task->getUser()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if (null === $task->getUser() && !$security->isGranted('ROLE_ADMIN')) {
+            //$test = $security->isGranted('ROLE_ADMIN');
+            $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez modifier une tâche anonyme.'));
+
+            return $this->redirectToRoute('task_list_not_done');
         }
 
         // check if user is the author of the task, and author of the task is not anonymous
@@ -84,7 +101,6 @@ class TaskController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
             $this->addFlash('success', 'La tâche a bien été modifiée.');
 
             return $this->redirectToRoute('task_list_not_done');
@@ -99,11 +115,10 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/toggle", name="task_toggle")
      */
-    public function toggleTaskAction(Task $task)
+    public function toggleTaskAction(Task $task): Response
     {
         $task->toggle(!$task->isDone());
         $this->getDoctrine()->getManager()->flush();
-
         $this->addFlash('success', sprintf('Le statut de la tâche %s a bien été modifié.', $task->getTitle()));
 
         return $this->redirectToRoute('task_list_not_done');
@@ -112,11 +127,13 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/delete", name="task_delete")
      */
-    public function deleteTaskAction(Task $task)
+    public function deleteTaskAction(Task $task, Security $security): Response
     {
         // if author of task is anonymous, then check if user has admin rights
-        if (null === $task->getUser()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if (null === $task->getUser() && !$security->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez supprimer une tâche anonyme.'));
+
+            return $this->redirectToRoute('task_list_not_done');
         }
 
         // check if user is the author of the task, and author of the task is not anonymous
@@ -129,7 +146,6 @@ class TaskController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($task);
         $entityManager->flush();
-
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 
         return $this->redirectToRoute('task_list_not_done');

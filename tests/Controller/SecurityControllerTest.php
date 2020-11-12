@@ -58,4 +58,65 @@ class SecurityControllerTest extends WebTestCase
         $client->followRedirect();
         $this->assertStringContainsString('a pas pu être trouvé', $client->getResponse()->getContent());
     }
+
+    public function testLoginActionBruteForceIsDenied()
+    {
+        $client = static::createClient();
+        $client->request('GET', '/login');
+        $client->submitForm('Se connecter', [
+            '_username' => 'utilisateur2',
+            '_password' => 'wrongPassword',
+        ]);
+        
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('Identifiants invalides', $client->getResponse()->getContent());
+
+        $client->request('GET', '/login');
+        $client->submitForm('Se connecter', [
+            '_username' => 'utilisateur2',
+            '_password' => 'wrongPassword',
+        ]);
+        
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('Identifiants invalides', $client->getResponse()->getContent());
+
+        $client->request('GET', '/login');
+        $client->submitForm('Se connecter', [
+            '_username' => 'utilisateur2',
+            '_password' => 'wrongPassword',
+        ]);
+        
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('Identifiants invalides', $client->getResponse()->getContent());
+
+        $client->request('GET', '/login');
+        $client->submitForm('Se connecter', [
+            '_username' => 'utilisateur2',
+            '_password' => 'wrongPassword',
+        ]);
+        
+        $this->assertResponseRedirects();
+        $client->followRedirect();                
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('Trop de tentative de connexion', $client->getResponse()->getContent());
+    }
+
+    public function testLoginActionCsrfWrongTokenIsDenied()
+    {
+        $client = static::createClient();
+        $client->request('GET', '/login');
+        $client->submitForm('Se connecter', [
+            '_username' => 'utilisateur2',
+            '_password' => '@dmIn123',
+            '_csrf_token' => 'wrongToken'
+        ]);
+        
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('CSRF', $client->getResponse()->getContent());
+    }
 }

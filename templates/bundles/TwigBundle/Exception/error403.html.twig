@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'error' %}
+
+{% block body %}
+
+<section>
+    <div class="container login-section-inner">
+        <div class="row">
+            <div class="col-lg-6 col-md-4 mx-auto">   
+                <h1 class="text-danger section-heading" id="logintitle"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Oups !!</h1>
+         
+                <p class="lead">
+                    Accès Interdit
+                </p>
+                <p class="lead">
+                    Code d'erreur : 403 
+                </p>
+                <div>
+                    <a class="btn btn-primary" href="{{ path('homepage') }}">Retour à l'accueil</a>
+                </div>                                                        
+            </div>
+        </div>    
+    </div>
+</section>
+
+{% endblock %}
