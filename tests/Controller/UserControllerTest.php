@@ -123,4 +123,49 @@ class UserControllerTest extends WebTestCase
         $this->assertStringContainsString('Superbe', $client->getResponse()->getContent());
         $this->assertStringContainsString('jimmy2', $client->getResponse()->getContent());
     }
+
+    public function testUserEditActionDataTransformer()
+    {
+        // loggin as admin
+        $client = static::createClient([], [
+            'PHP_AUTH_USER' => 'utilisateur2',
+            'PHP_AUTH_PW'   => '@dmIn123',
+        ]);
+
+        // create a new user with the creation form, and test this form
+        $client->request('GET', '/users/create');
+        $client->submitForm('Ajouter', [
+            'user[username]' => 'jimmy',
+            'user[password][first]' => '@dmIn123',
+            'user[password][second]' => '@dmIn123',
+            'user[email]' => 'jimmy@test.com',
+            'user[roles]' => 'ROLE_USER',
+        ]);
+
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('utilisateur a bien été ajouté', $client->getResponse()->getContent());
+
+        // try now to access the edit form, editing this new user        
+        $userRepository = static::$container->get(UserRepository::class);
+        $userId = $userRepository->findOneBy(['username' => 'jimmy'])->getId();
+        $client->request('GET', '/users/' . $userId . '/edit');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('jimmy', $client->getResponse()->getContent());
+        
+        // submit the edit form with modified data, and control the output
+        $client->submitForm('Modifier', [
+            'user[username]' => 'jimmy2',
+            'user[password][first]' => '@dmIn123',
+            'user[password][second]' => '@dmIn123',
+            'user[email]' => 'jimmy2@test.com',
+            'user[roles]' => 'ROLE_ADMIN',
+        ]);
+
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('Superbe', $client->getResponse()->getContent());
+        $this->assertStringContainsString('jimmy2', $client->getResponse()->getContent());
+    }
 }

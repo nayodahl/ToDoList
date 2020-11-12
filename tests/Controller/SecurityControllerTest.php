@@ -104,4 +104,19 @@ class SecurityControllerTest extends WebTestCase
         $client->followRedirect();
         $this->assertStringContainsString('Trop de tentative de connexion', $client->getResponse()->getContent());
     }
+
+    public function testLoginActionCsrfWrongTokenIsDenied()
+    {
+        $client = static::createClient();
+        $client->request('GET', '/login');
+        $client->submitForm('Se connecter', [
+            '_username' => 'utilisateur2',
+            '_password' => '@dmIn123',
+            '_csrf_token' => 'wrongToken'
+        ]);
+        
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('CSRF', $client->getResponse()->getContent());
+    }
 }

@@ -66,10 +66,11 @@ class UserType extends AbstractType
         ->addModelTransformer(new CallbackTransformer(
             function ($rolesAsArray) {
                 // transform the array to a string
+                /*
                 if (null === $rolesAsArray) {
                     return implode(', ', []);
                 }
-
+                */
                 return implode(', ', $rolesAsArray);
             },
             function ($rolesAsString) {
