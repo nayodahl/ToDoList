@@ -90,11 +90,11 @@ class UserControllerTest extends WebTestCase
         // create a new user with the creation form, and test this form
         $client->request('GET', '/users/create');
         $client->submitForm('Ajouter', [
-            'user[username]' => 'jimmy',
-            'user[password][first]' => '@dmIn123',
-            'user[password][second]' => '@dmIn123',
-            'user[email]' => 'jimmy@test.com',
-            'user[roles]' => 'ROLE_USER',
+            'create_user[username]' => 'jimmy',
+            'create_user[password][first]' => '@dmIn123',
+            'create_user[password][second]' => '@dmIn123',
+            'create_user[email]' => 'jimmy@test.com',
+            'create_user[roles]' => 'ROLE_USER',
         ]);
 
         $this->assertResponseRedirects();
@@ -111,11 +111,9 @@ class UserControllerTest extends WebTestCase
         
         // submit the edit form with modified data, and control the output
         $client->submitForm('Modifier', [
-            'user[username]' => 'jimmy2',
-            'user[password][first]' => '@dmIn123',
-            'user[password][second]' => '@dmIn123',
-            'user[email]' => 'jimmy2@test.com',
-            'user[roles]' => 'ROLE_ADMIN',
+            'edit_user[username]' => 'jimmy2',
+            'edit_user[email]' => 'jimmy2@test.com',
+            'edit_user[roles]' => 'ROLE_ADMIN',
         ]);
 
         $this->assertResponseRedirects();
@@ -135,11 +133,11 @@ class UserControllerTest extends WebTestCase
         // create a new user with the creation form, and test this form
         $client->request('GET', '/users/create');
         $client->submitForm('Ajouter', [
-            'user[username]' => 'jimmy',
-            'user[password][first]' => '@dmIn123',
-            'user[password][second]' => '@dmIn123',
-            'user[email]' => 'jimmy@test.com',
-            'user[roles]' => 'ROLE_USER',
+            'create_user[username]' => 'jimmy',
+            'create_user[password][first]' => '@dmIn123',
+            'create_user[password][second]' => '@dmIn123',
+            'create_user[email]' => 'jimmy@test.com',
+            'create_user[roles]' => 'ROLE_USER',
         ]);
 
         $this->assertResponseRedirects();
@@ -156,11 +154,9 @@ class UserControllerTest extends WebTestCase
         
         // submit the edit form with modified data, and control the output
         $client->submitForm('Modifier', [
-            'user[username]' => 'jimmy2',
-            'user[password][first]' => '@dmIn123',
-            'user[password][second]' => '@dmIn123',
-            'user[email]' => 'jimmy2@test.com',
-            'user[roles]' => 'ROLE_ADMIN',
+            'edit_user[username]' => 'jimmy2',
+            'edit_user[email]' => 'jimmy2@test.com',
+            'edit_user[roles]' => 'ROLE_ADMIN',
         ]);
 
         $this->assertResponseRedirects();
@@ -176,11 +172,11 @@ class UserControllerTest extends WebTestCase
         // create a new user with the creation form
         $client->request('GET', '/users/create');
         $client->submitForm('Ajouter', [
-            'user[username]' => 'testUserCreate',
-            'user[password][first]' => '@dmIn123',
-            'user[password][second]' => '@dmIn123',
-            'user[email]' => 'testUserCreateActionAndLogin@test.com',
-            'user[roles]' => 'ROLE_USER',
+            'create_user[username]' => 'testUserCreate',
+            'create_user[password][first]' => '@dmIn123',
+            'create_user[password][second]' => '@dmIn123',
+            'create_user[email]' => 'testUserCreateActionAndLogin@test.com',
+            'create_user[roles]' => 'ROLE_USER',
         ]);
 
         $this->assertResponseRedirects();

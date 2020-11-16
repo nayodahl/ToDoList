@@ -16,11 +16,11 @@ class IsValidUsernameValidatorTest extends WebTestCase
         // create a new user with the creation form
         $client->request('GET', '/users/create');
         $client->submitForm('Ajouter', [
-            'user[username]' => $username,
-            'user[password][first]' => '@dmIn123',
-            'user[password][second]' => '@dmIn123',
-            'user[email]' => 'jimmy@test.com',
-            'user[roles]' => 'ROLE_USER',
+            'create_user[username]' => $username,
+            'create_user[password][first]' => '@dmIn123',
+            'create_user[password][second]' => '@dmIn123',
+            'create_user[email]' => 'jimmy@test.com',
+            'create_user[roles]' => 'ROLE_USER',
         ]);
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());

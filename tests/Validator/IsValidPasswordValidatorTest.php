@@ -16,11 +16,11 @@ class IsValidPasswordValidatorTest extends WebTestCase
         // create a new user with the creation form
         $client->request('GET', '/users/create');
         $client->submitForm('Ajouter', [
-            'user[username]' => 'jimmytestCreateUserActionNotValidPassword',
-            'user[password][first]' => $password,
-            'user[password][second]' => $password,
-            'user[email]' => 'jimmytestCreateUserActionNotValidPassword@test.com',
-            'user[roles]' => 'ROLE_USER',
+            'create_user[username]' => 'jimmytestCreateUserActionNotValidPassword',
+            'create_user[password][first]' => $password,
+            'create_user[password][second]' => $password,
+            'create_user[email]' => 'jimmytestCreateUserActionNotValidPassword@test.com',
+            'create_user[roles]' => 'ROLE_USER',
         ]);
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
