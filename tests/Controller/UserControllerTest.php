@@ -186,10 +186,11 @@ class UserControllerTest extends WebTestCase
         $this->assertResponseRedirects();
         $client->followRedirect();
         $this->assertStringContainsString('utilisateur a bien été ajouté', $client->getResponse()->getContent());
-        self::ensureKernelShutdown();
+
+        // check that you are redirected to login page
+        $this->assertStringContainsString('Nom d\'utilisateur', $client->getResponse()->getContent());
         
         // try to login with the new user
-        $client = static::createClient();
         $client->request('GET', '/login');
         $client->submitForm('Se connecter', [
             '_username' => 'testUserCreate',
