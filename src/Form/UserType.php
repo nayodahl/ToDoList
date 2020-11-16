@@ -43,7 +43,6 @@ class UserType extends AbstractType
                     ],
                 ],
                 'invalid_message' => 'Les mots de passe ne sont pas identiques.',
-                'mapped' => false,
                 'second_options' => ['label' => 'Tapez le mot de passe à nouveau'],
             ])
             ->add('email', EmailType::class, [

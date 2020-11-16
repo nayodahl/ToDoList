@@ -168,4 +168,36 @@ class UserControllerTest extends WebTestCase
         $this->assertStringContainsString('Superbe', $client->getResponse()->getContent());
         $this->assertStringContainsString('jimmy2', $client->getResponse()->getContent());
     }
+
+    public function testUserCreateActionAndLogin()
+    {
+        $client = static::createClient();
+
+        // create a new user with the creation form
+        $client->request('GET', '/users/create');
+        $client->submitForm('Ajouter', [
+            'user[username]' => 'testUserCreate',
+            'user[password][first]' => '@dmIn123',
+            'user[password][second]' => '@dmIn123',
+            'user[email]' => 'testUserCreateActionAndLogin@test.com',
+            'user[roles]' => 'ROLE_USER',
+        ]);
+
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('utilisateur a bien été ajouté', $client->getResponse()->getContent());
+        self::ensureKernelShutdown();
+        
+        // try to login with the new user
+        $client = static::createClient();
+        $client->request('GET', '/login');
+        $client->submitForm('Se connecter', [
+            '_username' => 'testUserCreate',
+            '_password' => '@dmIn123',
+        ]);        
+
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertStringContainsString('Bienvenue sur Todo List', $client->getResponse()->getContent());
+    }
 }
