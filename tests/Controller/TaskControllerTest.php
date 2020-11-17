@@ -64,6 +64,27 @@ class TaskControllerTest extends WebTestCase
         $this->assertStringContainsString('La tâche a été bien été ajoutée', $client->getResponse()->getContent());
     }
 
+    public function testTasksEditActionDenyIfNotLogged()
+    {
+        $client = static::createClient();
+
+        // create a new task with anonymous author, so without being authenticated
+        $client->request('GET', '/tasks/create');
+        $client->submitForm('Ajouter', [
+            'task[title]' => 'titre testTasksEditActionDenyIfNotLogged',
+            'task[content]' => 'contenu testTasksEditActionDenyIfNotLogged',
+        ]);
+
+        // load the new task and try to edit it as non logged, you should be denied
+        $taskRepository = static::$container->get(TaskRepository::class);
+        $taskId = $taskRepository->findOneBy(['title' => 'titre testTasksEditActionDenyIfNotLogged'])->getId();
+        $client->request('GET', '/tasks/' . $taskId . '/edit');
+
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $client->followRedirect();
+        $this->assertStringContainsString('administrateur', $client->getResponse()->getContent());
+    }
+
     public function testTasksEditActionDenyIfNotAdminAndAuthorIsAnonymous()
     {
         $client = static::createClient();
