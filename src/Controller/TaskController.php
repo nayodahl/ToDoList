@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
 
 class TaskController extends AbstractController
 {
@@ -79,19 +78,11 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/edit", name="task_edit")
      */
-    public function editAction(Task $task, Request $request, Security $security): Response
+    public function editAction(Task $task, Request $request): Response
     {
-        // if author of task is anonymous, then check if user has admin rights
-        if (null === $task->getUser() && !$security->isGranted('ROLE_ADMIN')) {
-            //$test = $security->isGranted('ROLE_ADMIN');
-            $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez modifier une tâche anonyme.'));
-
-            return $this->redirectToRoute('task_list_not_done');
-        }
-
-        // check if user is the author of the task, and author of the task is not anonymous
-        if (($this->getUser() !== $task->getUser()) && (null !== $task->getUser())) {
-            $this->addFlash('error', sprintf('Vous n\'êtes pas l\'auteur(e) de la tâche %s.', $task->getTitle()));
+        // checks permissions calling TaskVoter
+        if (!$this->isGranted('EDIT', $task)) {
+            $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez modifier une tâche anonyme, ou vous n\'êtes pas l\'auteur(e) de la tâche'));
 
             return $this->redirectToRoute('task_list_not_done');
         }
@@ -113,32 +104,13 @@ class TaskController extends AbstractController
     }
 
     /**
-     * @Route("/tasks/{id}/toggle", name="task_toggle")
-     */
-    public function toggleTaskAction(Task $task): Response
-    {
-        $task->toggle(!$task->isDone());
-        $this->getDoctrine()->getManager()->flush();
-        $this->addFlash('success', sprintf('Le statut de la tâche %s a bien été modifié.', $task->getTitle()));
-
-        return $this->redirectToRoute('task_list_not_done');
-    }
-
-    /**
      * @Route("/tasks/{id}/delete", name="task_delete")
      */
-    public function deleteTaskAction(Task $task, Security $security): Response
+    public function deleteTaskAction(Task $task): Response
     {
-        // if author of task is anonymous, then check if user has admin rights
-        if (null === $task->getUser() && !$security->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez supprimer une tâche anonyme.'));
-
-            return $this->redirectToRoute('task_list_not_done');
-        }
-
-        // check if user is the author of the task, and author of the task is not anonymous
-        if (($this->getUser() !== $task->getUser()) && (null !== $task->getUser())) {
-            $this->addFlash('error', sprintf('Vous n\'êtes pas l\'auteur(e) de la tâche %s.', $task->getTitle()));
+        // checks permissions calling TaskVoter
+        if (!$this->isGranted('EDIT', $task)) {
+            $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez modifier une tâche anonyme, ou vous n\'êtes pas l\'auteur(e) de la tâche'));
 
             return $this->redirectToRoute('task_list_not_done');
         }
@@ -147,6 +119,18 @@ class TaskController extends AbstractController
         $entityManager->remove($task);
         $entityManager->flush();
         $this->addFlash('success', 'La tâche a bien été supprimée.');
+
+        return $this->redirectToRoute('task_list_not_done');
+    }
+
+    /**
+     * @Route("/tasks/{id}/toggle", name="task_toggle")
+     */
+    public function toggleTaskAction(Task $task): Response
+    {
+        $task->toggle(!$task->isDone());
+        $this->getDoctrine()->getManager()->flush();
+        $this->addFlash('success', sprintf('Le statut de la tâche %s a bien été modifié.', $task->getTitle()));
 
         return $this->redirectToRoute('task_list_not_done');
     }
