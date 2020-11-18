@@ -33,7 +33,7 @@ class User implements UserInterface
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=255)
      * @UserAssert\IsValidPassword
      */
     private $password;
