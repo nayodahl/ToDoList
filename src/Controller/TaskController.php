@@ -81,7 +81,7 @@ class TaskController extends AbstractController
     public function editAction(Task $task, Request $request): Response
     {
         // checks permissions calling TaskVoter
-        if (!$this->isGranted('EDIT', $task)) {
+        if (!$this->isGranted('TASK_EDIT', $task)) {
             $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez modifier une tâche anonyme, ou vous n\'êtes pas l\'auteur(e) de la tâche'));
 
             return $this->redirectToRoute('task_list_not_done');
@@ -109,7 +109,7 @@ class TaskController extends AbstractController
     public function deleteTaskAction(Task $task): Response
     {
         // checks permissions calling TaskVoter
-        if (!$this->isGranted('EDIT', $task)) {
+        if (!$this->isGranted('TASK_DELETE', $task)) {
             $this->addFlash('error', sprintf('Vous n\'êtes pas administrateur, vous ne pouvez modifier une tâche anonyme, ou vous n\'êtes pas l\'auteur(e) de la tâche'));
 
             return $this->redirectToRoute('task_list_not_done');
