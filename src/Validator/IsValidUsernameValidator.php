@@ -37,7 +37,7 @@ class IsValidUsernameValidator extends ConstraintValidator
 
         // Regex for username, exemple here https://ihateregex.io/expr/username
         // only alhpanumeric caracteres and between 4 and 16 caracters
-        if (!preg_match('/^[a-zA-Z0-9_-]{4,15}$/', $value, $matches)) {
+        if (!preg_match('/^[a-zA-Z0-9_-]{4,15}$/', $value)) {
             $this->context->buildViolation($constraint->message)
             ->setParameter('{{ value }}', $value)
             ->addViolation();

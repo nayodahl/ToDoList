@@ -36,7 +36,7 @@ class IsValidPasswordValidator extends ConstraintValidator
         }
 
         // Regex for password, exemple here https://ihateregex.io/expr/password
-        if (!preg_match('/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/', $value, $matches)) {
+        if (!preg_match('/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/', $value)) {
             $this->context->buildViolation($constraint->message)
             ->setParameter('{{ value }}', $value)
             ->addViolation();
