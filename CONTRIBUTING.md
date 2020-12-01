@@ -27,4 +27,4 @@ You can do some things to increase the chance that your Pull Request is accepted
 * [PSR-12: Extended Coding Style](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-12-extended-coding-style-guide.md)
 * [PSR-4: Autoloading Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md)
 * [Symfony Coding Standards](https://symfony.com/doc/current/contributing/code/standards.html)
-https://www.php-fig.org/psr/
+* https://www.php-fig.org/psr/
